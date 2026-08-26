@@ -1,0 +1,62 @@
+name: Frontend Continuous Integration
+
+on:
+  pull_request:
+    branches: [main]
+    paths: ["starter/frontend/**"]
+  workflow_dispatch:
+
+defaults:
+  run:
+    working-directory: starter/frontend
+
+jobs:
+  lint:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-frontend-${{ hashFiles('starter/frontend/package-lock.json') }}
+      - run: npm ci
+      - run: npm run lint
+
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-frontend-${{ hashFiles('starter/frontend/package-lock.json') }}
+      - run: npm ci
+      - run: npm test
+        env:
+          CI: "true"
+
+  build:
+    needs: [lint, test]
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+      - uses: actions/cache@v4
+        with:
+          path: ~/.npm
+          key: ${{ runner.os }}-frontend-${{ hashFiles('starter/frontend/package-lock.json') }}
+      - run: npm ci
+      - run: npm test
+        env:
+          CI: "true"
+      - run: docker build --build-arg REACT_APP_MOVIE_API_URL="$REACT_APP_MOVIE_API_URL" --tag mp-frontend:ci .
+        env:
+          REACT_APP_MOVIE_API_URL: http://localhost:5000
