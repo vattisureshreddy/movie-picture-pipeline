@@ -11,3 +11,4 @@ credentials
 
 *.tfstate
 *.tfstate.*
+*.tfstate.*
