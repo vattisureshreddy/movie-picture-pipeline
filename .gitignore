@@ -8,3 +8,6 @@ credentials
 # Local Terraform state
 *.tfstate
 *.tfstate.*
+
+*.tfstate
+*.tfstate.*
