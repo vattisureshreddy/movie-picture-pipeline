@@ -1,5 +1,7 @@
 variable "k8s_version" {
-  default = "1.25"
+  # Kubernetes 1.32 remains compatible with the Amazon Linux 2 AMI lookup
+  # used by this starter template while avoiding the unsupported 1.25 default.
+  default = "1.32"
 }
 
 variable "enable_private" {
